@@ -1,15 +1,25 @@
 ---
 - hosts: elam
-  become: true
-  become_user: root
   tasks:
-  - name: install httpd
-    yum: name=httpd state=present
-  - name: start httpd
-    service: name=httpd state=started
-  - name: deploy html file
-    copy: src=index.html dest=/var/www/html
-    notify: restart httpd
+    - name: Install an HTTP server (Apache)
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start an HTTP server (Apache)
+      service:
+        name: apache2
+        state: started
+
+    - name: Copy an HTML file
+      copy:
+        src: /root/ansible/index.html
+        dest: /var/www/html
+      notify: restart httpd
+
   handlers:
-  - name: restart httpd
-    service: name=httpd state=restarted
+    - name: restart httpd
+      service:
+        name: apache2
+        state: restarted
+
