@@ -1,0 +1,26 @@
+name: Fetch GitHub Actions IP Addresses
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fetch-ips:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Fetch GitHub Actions IP addresses
+        id: fetch-ips
+        run: |
+          GITHUB_ACTIONS_IPS=$(curl -s https://api.github.com/meta | jq -r '.actions[]')
+          echo "$GITHUB_ACTIONS_IPS"
+          echo "::set-output name=actions_ips::$GITHUB_ACTIONS_IPS"
+
+      - name: Display GitHub Actions IP addresses
+        run: echo "${{ steps.fetch-ips.outputs.actions_ips }}"
